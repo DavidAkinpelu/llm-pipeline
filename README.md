@@ -542,6 +542,20 @@ class BnBConfig:
     bnb_4bit_compute_dtype: str = "bfloat16"  # "float16", "bfloat16", "float32"
     bnb_8bit_compute_dtype: str = "float16"
     llm_int8_threshold: float = 6.0
+    # Configurable memory calculations
+    bytes_per_4bit_param: float = 0.5
+    bytes_per_8bit_param: float = 1.0
+    memory_unit_factor: int = 1024
+    # Configurable compression ratios
+    compression_ratio_4bit: float = 8.0
+    compression_ratio_8bit: float = 4.0
+    # Configurable weight initialization
+    weight_init_method: str = "random"  # "random", "zeros", "ones", "xavier", "kaiming"
+    weight_init_std: float = 0.02
+    # Configurable logging
+    enable_logging: bool = True
+    log_level: str = "INFO"
+    suppress_import_warnings: bool = False
 ```
 
 **Valid 4-bit Quantization Types**: `["nf4", "fp4"]`
@@ -557,6 +571,18 @@ class AQLMConfig:
     in_group_size: int = 8
     out_group_size: int = 1
     num_codebooks_per_group: int = 1
+    # Configurable bit width calculations
+    baseline_bits: int = 32  # Baseline precision (fp32 = 32 bits)
+    compressed_bits: float = 2.0  # AQLM compressed bits per parameter
+    # Configurable memory calculations
+    bytes_per_element: int = 4  # Bytes per element (fp32 = 4, fp16 = 2)
+    memory_unit_factor: int = 1024  # Memory unit conversion factor
+    # Configurable target modules
+    default_target_modules: Optional[List[str]] = None
+    # Configurable logging
+    enable_logging: bool = True
+    log_level: str = "INFO"
+    suppress_import_warnings: bool = False
 ```
 
 **Valid nbits_per_codebook**: `[8, 16]`
@@ -572,11 +598,46 @@ class LoftQConfig:
     quantization_scheme: QuantizationScheme = QuantizationScheme.NF4
     num_optimization_steps: int = 100
     learning_rate: float = 1e-3
+    # Configurable LoRA initialization
+    lora_init_std: float = 0.01   # LoRA initialization scaling
+    lora_init_method: str = "normal"  # "normal", "uniform", "kaiming", "xavier"
+    # Configurable quantization parameters
+    epsilon: float = 1e-8         # Numerical stability constant
+    use_custom_nf4_levels: bool = False
+    custom_nf4_levels: Optional[List[float]] = None
+    # Configurable baseline for compression ratio
+    baseline_bits: int = 8        # Baseline precision for compression calculation
+    # Configurable logging
+    enable_logging: bool = True
+    log_level: str = "INFO"
+    log_frequency: int = 10       # Logging frequency during optimization
 ```
 
 **Valid LoftQ Bits**: `[2, 4, 8]`
 
 **Valid Quantization Schemes**: `["nf4", "fp4", "int4", "int8", "int2"]`
+
+### Configurable Features
+
+#### Memory Calculation Parameters
+- **Bytes per Parameter**: Configurable for different quantization schemes
+- **Memory Unit Factor**: Configurable conversion factors (1024 for KB/MB/GB)
+- **Compression Ratios**: Configurable compression ratios for different bit widths
+
+#### Weight Initialization Methods
+- **LoRA Initialization**: `["normal", "uniform", "kaiming", "xavier"]`
+- **DoRA Magnitude**: `["ones", "random", "kaiming"]`
+- **Custom Scaling**: Configurable initialization standard deviations
+
+#### Logging and Monitoring
+- **Log Levels**: `["DEBUG", "INFO", "WARNING", "ERROR"]`
+- **Import Warnings**: Configurable suppression of external library warnings
+- **Logging Frequency**: Configurable logging intervals during training/optimization
+
+#### Advanced Configuration
+- **Custom NF4 Levels**: User-defined quantization levels for specialized use cases
+- **Dynamic Target Modules**: Configurable target modules for different architectures
+- **Numerical Stability**: Configurable epsilon values for numerical stability
 
 ### NF4 Quantization Levels
 
@@ -714,11 +775,11 @@ class MultiAdapterConfig:
 
 Contributions are welcome! This project is in active development and we're looking for:
 
-- **Training Framework**: Implement distributed training capabilities
-- **Inference Engine**: Build optimized inference pipeline
-- **Model Merging**: Implement advanced merging strategies
+- **Large-Scale Training**: Implement distributed training capabilities and cloud integration
+- **Production Infrastructure**: Build API servers and deployment tools
+- **Advanced Features**: Multi-modal support, compression, and optimization
 - **Documentation**: Improve examples and tutorials
-- **Testing**: Add comprehensive test coverage
+- **Testing**: Add comprehensive test coverage for new features
 
 Please see our contributing guidelines for details.
 
@@ -727,12 +788,12 @@ Please see our contributing guidelines for details.
 See [unified_development_plan.md](unified_development_plan.md) for the complete development roadmap covering comprehensive testing and production deployment.
 
 ### Current Focus Areas:
-1. **Repository Reorganization** (Phase 1): Testing infrastructure and validation
-2. **Inference Quantization** (Phase 2): Post-training quantization and GGUF support
-3. **Core Inference Engine** (Phase 3): Optimized inference pipeline
-4. **Model Merging** (Phase 4): Advanced merging strategies
-5. **Training Enhancement** (Phase 5): Educational training framework
-6. **Production Infrastructure** (Phase 6): API server and deployment
+1. **Repository Reorganization** (Phase 1): Testing infrastructure and validation ✅
+2. **Inference Quantization** (Phase 2): Post-training quantization and GGUF support ✅
+3. **Core Inference Engine** (Phase 3): Optimized inference pipeline ✅
+4. **Large-Scale Training** (Phase 4): Distributed training and cloud integration 🚧
+5. **Production Infrastructure** (Phase 5): API server and deployment
+6. **Advanced Features** (Phase 6): Multi-modal support and optimization
 
 ## 📄 License
 
@@ -743,20 +804,21 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 If you use this framework in your research, please cite:
 
 ```bibtex
-@software{universal_finetuning,
-  title={Universal Fine-Tuning Framework},
+@software{llm_pipeline,
+  title={LLM Pipeline Framework: Large-Scale Training and Inference for Modern Language Models},
   author={David Akinpelu},
   year={2024},
-  url={https://github.com/DavidAkinpelu/universal-finetuning}
+  url={https://github.com/DavidAkinpelu/llm-pipeline},
+  note={A comprehensive PyTorch framework for large-scale LLM fine-tuning, quantization, and inference}
 }
 ```
 
 ## 🔗 Links
 
-- **Repository**: [GitHub](https://github.com/DavidAkinpelu/universal-finetuning)
+- **Repository**: [GitHub](https://github.com/DavidAkinpelu/llm-pipeline)
 - **Documentation**: [Coming Soon]
-- **Issues**: [GitHub Issues](https://github.com/DavidAkinpelu/universal-finetuning/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/DavidAkinpelu/universal-finetuning/discussions)
+- **Issues**: [GitHub Issues](https://github.com/DavidAkinpelu/llm-pipeline/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/DavidAkinpelu/llm-pipeline/discussions)
 
 ---
 
