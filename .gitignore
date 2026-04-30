@@ -129,6 +129,10 @@ dmypy.json
 .pyre/
 
 # LLM Pipeline specific
+# All directory patterns below are anchored to the project root with a
+# leading "/" — without that, "models/" would also match
+# src/llm_pipeline/models/ and silently exclude source code from the repo.
+
 # Model checkpoints and weights
 *.bin
 *.safetensors
@@ -139,34 +143,34 @@ dmypy.json
 *.pkl
 *.pickle
 
-# Model cache directories
-models/
-checkpoints/
-weights/
-cache/
-.cache/
+# Model cache directories (project root only)
+/models/
+/checkpoints/
+/weights/
+/cache/
+/.cache/
 
-# Data directories
-data/
-datasets/
+# Data directories (project root only)
+/data/
+/datasets/
 *.parquet
 
 # Benchmark outputs
-benchmarks/results/
-torch_compile_debug/
+/benchmarks/results/
+/torch_compile_debug/
 
-# Logs and outputs
-logs/
-outputs/
-results/
-experiments/
-runs/
+# Logs and outputs (project root only)
+/logs/
+/outputs/
+/results/
+/experiments/
+/runs/
 *.log
 
-# Temporary files
-tmp/
-temp/
-.tmp/
+# Temporary files (project root only)
+/tmp/
+/temp/
+/.tmp/
 
 # IDE and editor files
 .vscode/
@@ -194,39 +198,41 @@ conda-meta/
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
-# MLflow
-mlruns/
-mlartifacts/
+# MLflow (project root only)
+/mlruns/
+/mlartifacts/
 
-# Weights & Biases
-wandb/
+# Weights & Biases (project root only)
+/wandb/
 
-# TensorBoard logs
-tensorboard_logs/
-runs/
+# TensorBoard logs (project root only)
+/tensorboard_logs/
 
 # Hugging Face cache
 .cache/huggingface/
 
-# Quantization specific
-quantized_models/
+# Quantization checkpoint artifacts (project root only — does NOT match
+# the src/llm_pipeline/quantization/ source package)
+/quantized_models/
 *.quantized
 
-# LoRA adapters
-adapters/
-lora_adapters/
+# LoRA adapter checkpoints (project root only — does NOT match
+# the src/llm_pipeline/adapters/ source package)
+/adapters/
+/lora_adapters/
 *.lora
 
-# Merged models
-merged_models/
+# Merged models (project root only)
+/merged_models/
 
-# Performance benchmarks
-benchmarks/
-profiles/
+# Performance benchmarks (project root only — does NOT match
+# the src/llm_pipeline/evaluation/benchmarks/ source package)
+/benchmarks/
+/profiles/
 
-# Test artifacts
-test_outputs/
-test_results/
+# Test artifacts (project root only)
+/test_outputs/
+/test_results/
 
 # Documentation builds
 docs/build/
@@ -249,9 +255,9 @@ secrets.txt
 *.rar
 *.7z
 
-# GPU memory dumps
+# GPU memory dumps (project root only)
 *.mem
-memory_dumps/
+/memory_dumps/
 
 # Profiling outputs
 *.prof
@@ -262,9 +268,9 @@ htmlcov/
 .coverage
 coverage.xml
 
-# Local development
-local/
-dev/
+# Local development (project root only)
+/local/
+/dev/
 
 # Claude
 .claude
