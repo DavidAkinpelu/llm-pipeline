@@ -44,20 +44,38 @@ LM.
 
 ## Install
 
-Python 3.9–3.12 + CUDA. The base install pulls torch + transformers; opt
-in to extras for quantization or serving.
+Python 3.9–3.13 + CUDA. Dependency management uses
+[`uv`](https://docs.astral.sh/uv/) — a single-binary, drop-in replacement
+for `pip` + `venv` that reads the existing `pyproject.toml` directly. If
+you don't have it yet:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh   # or `pip install uv`
+```
+
+Then:
 
 ```bash
 git clone https://github.com/DavidAkinpelu/llm-pipeline.git
 cd llm-pipeline
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[serving,quantization,dev]"
+uv venv && source .venv/bin/activate
+uv pip install -e ".[serving,quantization,dev]"
 ```
 
-Extras: `serving` (FastAPI + Prometheus), `quantization` (bitsandbytes +
-aqlm + scipy), `dev` (pytest, black, flake8, mypy). Flash-attention is
-optional — install separately when you want the speedup; the engine falls
-back gracefully when it's missing.
+Extras:
+- `quantization` — bitsandbytes, aqlm, scipy, triton (Linux);
+- `serving` — FastAPI, uvicorn, Prometheus, pydantic;
+- `loggers` — wandb, mlflow, tensorboard (each soft-imported; install only
+  the one you use);
+- `dev` — pytest, black, flake8 + `Flake8-pyproject`, mypy;
+- `docs` — sphinx + theme;
+- `flash` — ninja only. `flash-attn` itself is torch+CUDA-version-pinned
+  and must be installed manually; the inference engine falls back
+  gracefully when it's missing.
+
+Stock `pip` still works (`python -m venv .venv && pip install -e
+".[...]"`); `uv` is just faster and keeps a `uv.lock` for reproducible
+installs.
 
 ## Quick taste
 
