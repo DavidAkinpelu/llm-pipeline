@@ -1,4 +1,4 @@
-"""Model wrapper for HuggingFace models with automatic LoRA injection."""
+"""Model wrapper for PyTorch models (including Qwen3) with automatic LoRA injection."""
 
 import torch
 import torch.nn as nn
@@ -9,7 +9,7 @@ from .registry import ModelRegistry
 
 
 class LoRAModelWrapper(nn.Module):
-    """Wrapper for HuggingFace models with automatic LoRA injection"""
+    """Wrapper for PyTorch models (including Qwen3) with automatic LoRA injection"""
     
     def __init__(
         self,

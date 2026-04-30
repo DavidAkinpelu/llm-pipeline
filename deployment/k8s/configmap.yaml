@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llm-pipeline-config
+data:
+  model_path: "/weights/qwen3-0.6b"
+  LLM_PIPELINE_HOST: "0.0.0.0"
+  LLM_PIPELINE_PORT: "8000"
+  LLM_PIPELINE_DEVICE: "cuda"
+  LLM_PIPELINE_DTYPE: "float16"

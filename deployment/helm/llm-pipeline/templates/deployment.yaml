@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-pipeline.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "llm-pipeline.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ if .Values.autoscaling.enabled }}{{ .Values.autoscaling.minReplicas }}{{ else }}{{ .Values.replicaCount }}{{ end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "llm-pipeline.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "llm-pipeline.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: LLM_PIPELINE_MODEL
+              value: {{ .Values.modelPath | quote }}
+            - name: LLM_PIPELINE_DEVICE
+              value: {{ .Values.device | quote }}
+            - name: LLM_PIPELINE_DTYPE
+              value: {{ .Values.dtype | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: weights
+              mountPath: /weights
+              readOnly: true
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: weights
+          persistentVolumeClaim:
+            claimName: {{ include "llm-pipeline.fullname" . }}-weights
+      {{- end }}

@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: llm-pipeline
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+modelPath: /weights/qwen3-0.6b
+device: cuda
+dtype: float16
+
+resources:
+  requests:
+    cpu: "2"
+    memory: 8Gi
+    nvidia.com/gpu: 1
+  limits:
+    cpu: "4"
+    memory: 16Gi
+    nvidia.com/gpu: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  hosts: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector:
+  nvidia.com/gpu.present: "true"
+
+persistence:
+  enabled: true
+  size: 50Gi
+  accessModes:
+    - ReadOnlyMany

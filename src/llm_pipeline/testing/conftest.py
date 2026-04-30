@@ -223,13 +223,6 @@ def pytest_configure(config):
     config.optional_deps = optional_deps
 
 
-def pytest_collection_modifyitems(config, items):
-    """Modify test collection to add markers and skip conditions."""
-    
-    for item in items:
-        # Markers are now defined in pytest.ini, no need to add them dynamically
-        # The pytest.ini file already handles marker registration
-        pass
 
 
 def pytest_runtest_setup(item):
@@ -242,10 +235,10 @@ def pytest_runtest_setup(item):
     
     # Skip quantization tests if dependencies not available
     if item.get_closest_marker("quantization"):
-        if "bnb" in item.name and not hasattr(item.config, "optional_deps") or not item.config.optional_deps.get("bitsandbytes", False):
+        deps = getattr(item.config, "optional_deps", {})
+        if "bnb" in item.name and not deps.get("bitsandbytes", False):
             pytest.skip("BitsAndBytes not available")
-        
-        if "aqlm" in item.name and not hasattr(item.config, "optional_deps") or not item.config.optional_deps.get("aqlm", False):
+        if "aqlm" in item.name and not deps.get("aqlm", False):
             pytest.skip("AQLM not available")
 
 

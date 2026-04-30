@@ -1,0 +1,70 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: pytest (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install (CPU torch)
+        run: |
+          python -m pip install --upgrade pip
+          # CPU-only torch keeps the runner image small and the install fast.
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -e ".[dev]"
+          # psutil + transformers are runtime deps; install them explicitly so
+          # the import smoke test doesn't blow up.
+          pip install psutil transformers datasets
+
+      - name: Show installed versions
+        run: |
+          python -c "import sys, torch, transformers; print(sys.version); print('torch', torch.__version__); print('transformers', transformers.__version__)"
+
+      - name: Import smoke test
+        run: pytest src/llm_pipeline/testing/unit/test_imports.py -v
+
+      - name: Unit tests
+        # Whole suite runs on CPU; bnb/aqlm-marked tests skip themselves
+        # gracefully when those libraries are absent (see conftest.py).
+        run: pytest src/llm_pipeline/testing/unit/ -v --tb=short
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8
+      - name: Black (check only)
+        run: black --check src/ || echo "::warning::black formatting drift — run 'black src/' locally"
+        continue-on-error: true
+      - name: Flake8 (advisory)
+        run: flake8 src/ --max-line-length=120 --select=E9,F63,F7,F82 --show-source

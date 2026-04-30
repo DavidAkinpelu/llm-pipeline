@@ -89,11 +89,14 @@ def estimate_training_memory(
         "model_memory_mb": model_memory_mb,
         "activation_memory_mb": activation_memory_mb,
         "gradient_memory_mb": grad_accum_memory_mb,
+        "optimizer_memory_mb": training_memory["optimizer_memory_mb"],
         "peak_memory_mb": peak_memory_mb,
         "peak_memory_gb": peak_memory_mb / 1024,
         "batch_size": batch_size,
         "sequence_length": sequence_length,
-        "memory_per_sample_mb": peak_memory_mb / batch_size
+        "memory_per_sample_mb": peak_memory_mb / batch_size,
+        "optimizer_type": optimizer_type,
+        "precision": precision,
     }
 
 

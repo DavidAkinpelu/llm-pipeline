@@ -1,3 +1,87 @@
-"""Training framework implementations."""
+"""Training framework: trainer, optimizer/scheduler factories, and SFT helpers."""
 
-__all__ = []
+from .trainer import Trainer, TrainerConfig
+from .optimization import (
+    OptimizerConfig,
+    SchedulerConfig,
+    build_optimizer,
+    build_scheduler,
+)
+from .compile import compile_model_for_training
+from .checkpointing import SelectiveCheckpointWrapper
+from .optim_offload import CPUOffloadOptimizer
+from .loggers import (
+    ConsoleLogger,
+    MLflowLogger,
+    MultiLogger,
+    TensorBoardLogger,
+    WandbLogger,
+)
+from .modes import (
+    SFTDataCollator,
+    SFTConfig,
+    DPOConfig,
+    DPODataCollator,
+    DPOTrainer,
+    compute_dpo_loss,
+    tokenize_preference,
+    GRPOConfig,
+    GRPOTrainer,
+    compute_grpo_loss,
+    PPOConfig,
+    PPOTrainer,
+    ValueHead,
+    compute_gae,
+    compute_ppo_loss,
+    ORPOConfig,
+    ORPOTrainer,
+    compute_orpo_loss,
+    KTOConfig,
+    KTODataCollator,
+    KTOTrainer,
+    compute_kto_loss,
+    tokenize_kto,
+    RewardModel,
+    RewardModelTrainer,
+    compute_bradley_terry_loss,
+)
+
+__all__ = [
+    "Trainer",
+    "TrainerConfig",
+    "OptimizerConfig",
+    "SchedulerConfig",
+    "build_optimizer",
+    "build_scheduler",
+    "SFTDataCollator",
+    "SFTConfig",
+    "DPOConfig",
+    "DPODataCollator",
+    "DPOTrainer",
+    "compute_dpo_loss",
+    "tokenize_preference",
+    "GRPOConfig",
+    "GRPOTrainer",
+    "compute_grpo_loss",
+    "PPOConfig",
+    "PPOTrainer",
+    "ValueHead",
+    "compute_gae",
+    "compute_ppo_loss",
+    "ORPOConfig",
+    "ORPOTrainer",
+    "compute_orpo_loss",
+    "KTOConfig",
+    "KTODataCollator",
+    "KTOTrainer",
+    "compute_kto_loss",
+    "tokenize_kto",
+    "RewardModel",
+    "RewardModelTrainer",
+    "compute_bradley_terry_loss",
+    "ConsoleLogger",
+    "MLflowLogger",
+    "MultiLogger",
+    "TensorBoardLogger",
+    "WandbLogger",
+]

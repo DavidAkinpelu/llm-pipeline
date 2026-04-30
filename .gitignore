@@ -149,12 +149,11 @@ cache/
 # Data directories
 data/
 datasets/
-*.csv
-*.json
-*.jsonl
-*.txt
-*.tsv
 *.parquet
+
+# Benchmark outputs
+benchmarks/results/
+torch_compile_debug/
 
 # Logs and outputs
 logs/
@@ -184,6 +183,9 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# LibreOffice / Office lockfiles
+.~lock.*#
 
 # Conda environment files
 environment.yml
@@ -263,3 +265,6 @@ coverage.xml
 # Local development
 local/
 dev/
+
+# Claude
+.claude

@@ -30,11 +30,11 @@ class TestQuantizationConfigs:
         BnBConfig(bnb_4bit_compute_dtype="bfloat16")
         BnBConfig(bnb_4bit_compute_dtype="float32")
         
-        # Invalid quant type
+        # Invalid quant type should raise ValueError (__post_init__ validation)
         with pytest.raises(ValueError, match="Invalid 4-bit quant type"):
             BnBConfig(bnb_4bit_quant_type="invalid")
         
-        # Invalid compute dtype
+        # Invalid compute dtype should raise ValueError (__post_init__ validation)
         with pytest.raises(ValueError, match="Invalid compute dtype"):
             BnBConfig(bnb_4bit_compute_dtype="invalid")
         

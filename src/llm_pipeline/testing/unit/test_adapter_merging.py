@@ -173,6 +173,22 @@ class TestAdapterMerger:
                 sample_adapters["adapter3"])
         expected = alpha * total
         torch.testing.assert_close(result, expected)
+
+    def test_merge_adapters_scaled_additive_allows_zero_alpha(self, merger, sample_adapters):
+        """An explicit zero alpha must not be replaced by the config default."""
+        result = merger.merge_adapters(
+            sample_adapters, MergeStrategy.SCALED_ADDITIVE, alpha=0.0
+        )
+
+        torch.testing.assert_close(result, torch.zeros_like(sample_adapters["adapter1"]))
+
+    def test_merge_adapters_dare_linear_allows_zero_density(self, merger, sample_adapters):
+        """An explicit zero density must not be replaced by the config default."""
+        result = merger.merge_adapters(
+            sample_adapters, MergeStrategy.DARE_LINEAR, density=0.0
+        )
+
+        torch.testing.assert_close(result, torch.zeros_like(sample_adapters["adapter1"]))
         
     def test_merge_adapters_empty(self, merger):
         """Test merge_adapters with empty adapter dict."""

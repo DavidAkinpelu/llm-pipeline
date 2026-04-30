@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-pipeline
+  labels:
+    app.kubernetes.io/name: llm-pipeline
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: llm-pipeline
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

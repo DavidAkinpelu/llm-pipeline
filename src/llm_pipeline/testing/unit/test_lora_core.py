@@ -44,12 +44,12 @@ class TestLoRAConfig:
         LoRAConfig(r=64, alpha=128.0, dropout=0.0)
         LoRAConfig(r=4, alpha=8.0, dropout=1.0)
         
-        # Invalid bias setting should raise error
+        # Invalid bias setting should raise ValueError (__post_init__ validation)
         with pytest.raises(ValueError, match="Invalid bias setting"):
             LoRAConfig(bias="invalid")
         
-        # Invalid initialization method should raise error
-        with pytest.raises(ValueError, match="Invalid init method"):
+        # Invalid initialization method should raise ValueError (__post_init__ validation)
+        with pytest.raises(ValueError, match="Invalid init_lora_weights"):
             LoRAConfig(init_lora_weights="invalid")
     
     def test_dora_config(self):
@@ -59,7 +59,7 @@ class TestLoRAConfig:
         assert config.use_dora is True  # Should be set automatically
         assert config.magnitude_init == "ones"
         
-        # Test invalid magnitude init
+        # Test invalid magnitude init should raise ValueError (__post_init__ validation)
         with pytest.raises(ValueError, match="Invalid magnitude_init"):
             DoRAConfig(magnitude_init="invalid")
 
@@ -723,6 +723,31 @@ class TestMemoryFootprintWithOptimizer:
 
 class TestTrainingMemoryEstimation:
     """Test training memory estimation with optimizer types."""
+
+    def test_estimate_training_memory_public_helper_preserves_optimizer_type(self):
+        """The top-level helper should expose optimizer-sensitive estimates."""
+        from llm_pipeline.utils.memory import estimate_training_memory
+
+        model = nn.Linear(16, 16)
+
+        sgd_memory = estimate_training_memory(
+            model,
+            batch_size=2,
+            sequence_length=8,
+            hidden_size=16,
+            optimizer_type="sgd",
+        )
+        adam_memory = estimate_training_memory(
+            model,
+            batch_size=2,
+            sequence_length=8,
+            hidden_size=16,
+            optimizer_type="adam",
+        )
+
+        assert sgd_memory["optimizer_type"] == "sgd"
+        assert adam_memory["optimizer_type"] == "adam"
+        assert sgd_memory["optimizer_memory_mb"] < adam_memory["optimizer_memory_mb"]
     
     def test_estimate_training_memory_different_optimizers(self):
         """Test training memory estimation with different optimizer types."""
